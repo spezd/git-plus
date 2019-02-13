@@ -25,7 +25,7 @@ def execute_command(command, output=True, prefix='', grep=None):
     if cmdout is None:
         return (0, "")
 
-    for line in cmdout.split('\n'):
+    for line in cmdout.decode().split('\n'):
         output_line = prefix + ('%s' % line).rstrip() + '\n'
         if not grep or grep in output_line:
             if output and output_line:
