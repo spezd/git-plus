@@ -14,6 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import print_function
 
 import sys as mod_sys
 import os as mod_os
@@ -75,8 +76,7 @@ def process_dir(dirname, depth):
                     process_project(abs_dir_name, file_name)
 
                     if show_progress and group_by_output:
-                        print '*',
-                        mod_sys.stdout.flush()
+                        print('* {}', mod_sys.stdout.flush())
                 elif depth > 1:
                     process_dir(mod_os.path.join(abs_dir_name, file_name), depth - 1)
 
@@ -96,7 +96,7 @@ def process_project(current_path, file_name):
         do_output = True
 
     if not group_by_output:
-        print '%s:' % file_name
+        print('{0}:'.format(file_name))
 
     execute = True
     if only_if_changed:
@@ -104,7 +104,7 @@ def process_project(current_path, file_name):
         if not execute:
             output = PREFIX + 'Not changed'
             if do_output:
-                print output
+                print(output)
 
     if execute:
         executed, result = mod_gitutils.execute_command(git_command, output=do_output, prefix=PREFIX, grep=grep)
@@ -170,7 +170,7 @@ if mod_path.exists('.multigit_ignore'):
     for line in f:
         project = line.strip()
         ignore_projects.append(project)
-    print 'Ignoring:', ', '.join(ignore_projects)
+    print('Ignoring: {0}'.format(', '.join(ignore_projects)))
     f.close()
 
 # Execute backup?
@@ -181,7 +181,7 @@ if backup:
 
     executed, output = mod_gitutils.execute_command('tar cvf %s */.git */.gitignore' % tar_name, output=True)
 
-    print 'Saved git repositories to %s' % tar_name
+    print('Saved git repositories to {0}'.format(tar_name))
 
     mod_sys.exit(0)
 
@@ -205,26 +205,25 @@ if git_command[0] == 'gitk':
 else:
     git_command.insert(0, 'git')
 
-print '--------------------------------------------------------------------------------'
+print('--------------------------------------------------------------------------------')
 if grep:
-    print 'Executing: %s | grep %s' % (' '.join(git_command), grep)
+    print('Executing: {0} | grep {1}'.format(' '.join(git_command), grep))
 else:
-    print 'Executing %s' % ' '.join(git_command)
-print '--------------------------------------------------------------------------------'
+    print('Executing {0}'.format(' '.join(git_command)))
+print('--------------------------------------------------------------------------------')
 
 # Used when group_by_output == True, keys are output, values are a list of projects
 outputs = {}
 
 if show_progress and group_by_output:
-    print 'Progress:',
-    mod_sys.stdout.flush()
+    print('Progress: {0}'.format(mod_sys.stdout.flush()))
 
 # Execute command on all subdirectories:
 process_dir(mod_os.getcwd(), depth)
 
 if show_progress and group_by_output:
-    print
-    print '--------------------------------------------------------------------------------'
+    print()
+    print('--------------------------------------------------------------------------------')
 
 # If group_by_output, then output them now:
 if group_by_output:
@@ -236,10 +235,10 @@ if group_by_output:
         projects.sort()
 
         result_outputs.append([', '.join(projects) + ':', output])
-        print
+        print()
 
     result_outputs.sort()
     for key, value in result_outputs:
-        print key
-        print value
-        print
+        print(key)
+        print(value)
+        print()

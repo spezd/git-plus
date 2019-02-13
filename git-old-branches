@@ -14,6 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import print_function
 
 import argparse as mod_argparse
 import time as mod_time
@@ -49,18 +50,18 @@ for branch in branches:
         mod_sys.exit(1)
 
     if len(result.strip()) == 0:
-        print 'Cannot find the age of %s' % branch
+        print('Cannot find the age of {0}'.format(branch))
     else:
         time_diff_seconds = int(now) - int(result)
         time_diff_days = int((float(time_diff_seconds) / (60*60*24)) * 100) / 100.
 
-        #print 'Last commit in %s was %s days ago' % (branch, time_diff_days)
+        #print('Last commit in {0} was {1} days ago'.format(branch, time_diff_days))
 
         if time_diff_days > args.days:
-            print 'Branch %s is older than %s days (%s)!' % (branch, args.days, time_diff_days)
+            print('Branch {0} is older than {1} days ({2})!'.format(branch, args.days, time_diff_days))
             if args.delete:
                 answer = raw_input('Remove [yes/N] ?')
                 if answer.lower() == 'yes':
                     mod_gitutils.delete_branch(branch, force=True)
                 else:
-                    print 'Not deleted'
+                    print('Not deleted')
