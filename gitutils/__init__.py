@@ -8,7 +8,7 @@ import subprocess
 
 
 def assert_in_git_repository():
-    success, lines = execute_git('status', output=False)
+    success, _ = execute_git('status', output=False)
     if not success:
         print('Not a git repository!!!')
         mod_sys.exit(1)
@@ -17,11 +17,11 @@ def assert_in_git_repository():
 def execute_command(command, output=True, prefix='', grep=None):
     result = ''
 
-    if type(command) is not list:
+    if not isinstance(command, list):
         command = command.split(' ')
 
     p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
-    (cmdout, cmderr) = p.communicate()
+    cmdout = p.communicate()[0]
     if cmdout is None:
         return (0, "")
 
@@ -40,12 +40,12 @@ def execute_git(command, output=True, prefix='', grep=None):
     return execute_command('git %s' % command, output, prefix, grep)
 
 
-def get_branches(remote=False, all=False, merged=None, no_merged=None):
+def get_branches(remote=False, all_branches=False, merged=None, no_merged=None):
     git_command = 'branch'
 
     if remote:
         git_command += ' -r'
-    if all:
+    if all_branches:
         git_command += ' -a'
     if merged is True:
         git_command += ' --merged'
@@ -60,11 +60,14 @@ def get_branches(remote=False, all=False, merged=None, no_merged=None):
     def _filter_branch(branch):
         if '*' in branch:
             # Current branch:
-            return branch.replace('*', '').strip()
+            branch = branch.replace('*', '').strip()
         elif '->' in branch:
             # Branch is an alias
-            return branch.split('->')[0].strip()
-        return branch.strip()
+            branch = branch.split('->')[0].strip()
+        else:
+            branch = branch.strip()
+
+        return branch
 
     lines = result.strip().split('\n')
     result = map(_filter_branch, lines)
