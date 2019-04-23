@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+
 
 import os.path as mod_path
 import sys as mod_sys
@@ -70,8 +70,8 @@ def get_branches(remote=False, all_branches=False, merged=None, no_merged=None):
         return branch
 
     lines = result.strip().split('\n')
-    result = map(_filter_branch, lines)
-    result = filter(lambda x: x, result)
+    result = list(map(_filter_branch, lines))
+    result = [x for x in result if x]
     return result
 
 
